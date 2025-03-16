@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager Dashboard</title>
+    <link rel="stylesheet" href="webpage.css">    
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Your Name<br><small>Staff</small></h2>
+        <ul class="menu">
+            <li class="active" onclick="switchView('dashboard')">Dashboard</li>
+            <li onclick="switchView('todo')">To Do List</li>
+            <li onclick="switchView('performance')">Performance Tracker</li>
+            <li onclick="switchView('inventory')">Inventory Management</li>
+            <li onclick="switchView('orders')">Order History</li>
+        </ul>
+    </div>
+    <div class="main">
+        <!-- dashboard view with the calendar na -->
+        <div id="dashboard-view" class="view active">
+            <div class="header">
+                <div>
+                    <button onclick="setToday()">Today</button>
+                    <select id="monthSelector" onchange="updateCalendar()">
+                        <option value="0">January</option>
+                        <option value="1">February</option>
+                        <option value="2">March</option>
+                        <option value="3">April</option>
+                        <option value="4">May</option>  <!-- month s=-->
+                        <option value="5">June</option>
+                        <option value="6">July</option>
+                        <option value="7">August</option>
+                        <option value="8">September</option>
+                        <option value="9">October</option>
+                        <option value="10">November</option>
+                        <option value="11">December</option>
+                    </select>
+                </div>
+                <div>
+                    <button onclick="showAgenda()">Agenda</button>
+                    <button onclick="showWeekly()">Weekly</button>
+                    <button onclick="showMonthly()">Monthly</button>
+                </div>
+            </div>
+            <div class="calendar" id="calendarGrid"></div>
+        </div>
+        <!-- to do list view  -->
+        <div id="todo-view" class="view">
+            <div class="todo-container">
+                <h3>To Do List</h3>
+                <input type="text" id="task-desc" placeholder="Enter task description">
+                <input type="date" id="task-date">                             <!--to input or type ni sila sa tasks then line 465 is para sa ma add task-->
+                <input type="time" id="task-time">
+                <button onclick="addTask()">Add Task</button>
+                <div id="todo-list"></div>
+                <h3>Finished</h3>
+                <div id="finished-tasks"></div>
+            </div>
+        </div>
+        <!-- performance tracker view -->
+        <div id="performance-view" class="view">
+            <div class="performance-container">
+                <h3>Performance Tracker</h3>
+                <!-- workflow section sa performance tracker -->
+                <div class="section">
+                    <h4>Workflow</h4>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Photographer</th>
+                                <th>Editor</th>
+                                <th>Cashier</th>
+                            </tr>
+                        </thead>
+                        <tbody id="workflow-list">
+                            <tr>
+                                <td>SHS Graduation Pictorial Grade 12 PROG A</td>
+                                <td>Staff 1</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>SHS Graduation Pictorial Grade 12 PROG A</td> <!-- kani sila is ga libog ko and ingna ko na ipa wala ko ni sila kay para ang admin moy mo input sa mga task sa mga staff-->
+                                <td>Staff 2</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>SHS Graduation Pictorial Grade 12 PROG A</td>
+                                <td>Staff 3</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>SHS Graduation Pictorial Grade 12 PROG A</td>
+                                <td>Staff 4</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- time in and time out section -->
+                <div class="section">
+                    <h4>Time In & Time Out</h4>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Time In</th>
+                                <th>Time Out</th>
+                            </tr>
+                        </thead>
+                        <tbody id="time-log">
+                            <!-- Initially empty, entries will be added dynamically -->
+                        </tbody>
+                    </table>
+                    <div class="time-buttons">
+                        <button onclick="recordTimeIn()">Time In</button> <!-- ig click ani kay mo set na sa time in then below ani kay mo set sa time ni out-->
+                        <button onclick="recordTimeOut()">Time Out</button>
+                    </div>
+                </div>
+                <!-- payroll section -->
+                <div class="section">
+                    <h4>Payroll</h4>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Hours Worked</th>
+                                <th>Hourly Rate</th>
+                                <th>Day Rate</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payroll-summary">     <!-- about this sad idk unsa angay buhaton kay i think ang admin ray bahala sa payroll sa staff and if imo ni improve ikaw lang bahala-->
+                            <tr>
+                                <td>11/6/2024</td>
+                                <td>3 hours</td>
+                                <td>₱250</td>
+                                <td>₱750</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- comments and feedbacks section -->
+                <div class="section">
+                    <h4>Comments & Feedbacks</h4>
+                    <div class="comments-feedbacks">
+                        <div>
+                            <h5>Comments</h5>
+                            <textarea rows="5" style="width: 100%; border-radius: 5px;" placeholder="Enter comments..."></textarea> 
+                        </div>
+                        <div>                                 <!-- maka input for comments and feedbacks-->
+                            <h5>Feedbacks</h5>
+                            <textarea rows="5" style="width: 100%; border-radius: 5px;" placeholder="Enter feedbacks..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- inventory management view -->
+        <div id="inventory-view" class="view">
+            <div class="inventory-container">
+                <h3>Inventory Management</h3>
+                <!-- inven stocks Section -->
+                <div class="section">
+                    <h4>Inventory Stocks</h4>
+                    <div class="inventory-controls">
+                        <button onclick="showAddItemForm()">Add Item</button>               
+                    </div>          
+                    <div class="inventory-stocks" id="inventory-stocks"></div>                 <!-- kani kay pwede ra ma add og item name quantity then add or cancel and to remove the item na gi input-->
+                    <div class="add-item-form" id="add-item-form">
+                        <input type="text" id="new-item-name" placeholder="Item Name">
+                        <input type="number" id="new-item-quantity" placeholder="Quantity" min="0">
+                        <button onclick="addNewItem()">Add</button>
+                        <button onclick="hideAddItemForm()">Cancel</button>
+                    </div>
+                </div>
+                <!-- borrow history section -->
+                <div class="section">
+                    <h4>Borrow History</h4>
+                    <table class="borrow-history-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Item/s Borrowed</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody id="borrow-history"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- order history view -->
+        <div id="orders-view" class="view">
+            <div class="order-history-container">
+                <h3>Order History</h3>
+                <div class="inventory-controls">
+                    <button onclick="showAddOrderForm()">Add Purchase</button>
+                </div>
+                <table class="order-history-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Item/s Purchased</th> 
+                            <th>Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-history"></tbody>
+                </table>
+                <div class="order-controls">
+                    <div class="add-order-form" id="add-order-form">
+                        <input type="date" id="order-date" placeholder="Date">
+                        <select id="order-item">
+                            <!-- sa gi butang sa inventory management kay ma put ari ang mga ga purchase on tag how much and pila ka buok-->
+                        </select>
+                        <input type="number" id="order-price" placeholder="Price (₱)" min="0" step="0.01">
+                        <input type="number" id="order-quantity" placeholder="Quantity" min="1">
+                        <button onclick="addOrder()">Add</button>
+                        <button onclick="hideAddOrderForm()">Cancel</button>
+                    </div>
+                    <div class="pagination">
+                        <button onclick="prevPage()">←</button> <!-- ari is ako ra gi follow ang naa sa ato gi make sa word so useless ang next and prev button pwede ra iremove-->
+                        <button onclick="nextPage()">→</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // View Switching
+        function switchView(viewId) { // function for switching dashboard and others
+            document.querySelectorAll('.view').forEach(view => view.classList.remove('active')); //hide view
+            document.getElementById(`${viewId}-view`).classList.add('active'); //pakit a ang selected view
+            document.querySelectorAll('.menu li').forEach(li => li.classList.remove('active')); //removes the active view
+            document.querySelector(`.menu li[onclick="switchView('${viewId}')"]`).classList.add('active');//add the active sa clicked menu item
+            if (viewId === 'dashboard') updateCalendar(); //refresh calendar 
+            if (viewId === 'performance') updatePerformanceTracker();//refresh performance tracker
+            if (viewId === 'inventory') {
+                updateInventory();//refresh inventory list 
+                updateBorrowHistory();//refresh borrow history
+            }
+            if (viewId === 'orders') {
+                updateOrderHistory(); //refresh order history 
+                populateOrderItems(); //update items sa order form
+            }
+        }
+
+        // to do list functions
+        function deleteTask(element) { // mo delete when click the delete icon
+            element.parentElement.remove();//removes the whole task
+        }
+
+        function addTask() { //adds a new task
+            let taskText = document.getElementById("task-desc").value; //get task descrip
+            let taskDate = document.getElementById("task-date").value;// get task date
+            let taskTime = document.getElementById("task-time").value;// get task time
+
+            if (!taskText || !taskDate || !taskTime) { //mo check if na butang na ang mga gipangayo
+                alert("Please enter all task details."); //mo show if naay kuwang na wala na fill up
+                return;
+            }
+
+            let taskList = document.getElementById("todo-list"); // mo get sa task list
+            let newTask = document.createElement("div");// mo make new task box
+            newTask.classList.add("task");
+            newTask.innerHTML = `
+                <input type="checkbox" onchange="moveToFinished(this)"> 
+                <span>${taskText} - ${taskDate} - ${taskTime}</span>
+                <button class="delete" onclick="deleteTask(this)">🗑️</button>
+            `;
+            taskList.appendChild(newTask); // add new task sa list
+
+            document.getElementById("task-desc").value = "";
+            document.getElementById("task-date").value = ""; // mo clear sa gipang input
+            document.getElementById("task-time").value = "";
+        }
+
+        function moveToFinished(checkbox) { //mo adto ang task sa finished when checked
+            let task = checkbox.parentElement; // mo get sa task box
+            if (checkbox.checked) {
+                task.classList.add("finished"); //strikethrough ang task
+                document.getElementById("finished-tasks").appendChild(task); //move sa finished list
+            } else {
+                task.classList.remove("finished"); //remove strikethrough 
+                document.getElementById("todo-list").appendChild(task);//mo balik sa active task
+            }
+        }
+
+        // calendar dashboard functions
+        const monthSelector = document.getElementById("monthSelector"); //month select
+        const calendarGrid = document.getElementById("calendarGrid");//calendar area
+        const events = {};//mo store sa mga events etc
+
+        function updateCalendar() { //mo update sa calender when ilisan ang month
+            const month = parseInt(monthSelector.value);//mo get sa selected month from 0 to 11 
+            calendarGrid.innerHTML = "";//clear sa current calendar
+            const today = new Date();//mo get sa specific date today
+            const year = today.getFullYear();//the current year
+            const firstDay = new Date(year, month, 1).getDay();//day of the week sa month starts
+            const daysInMonth = new Date(year, month + 1, 0).getDate();//total dates sa month
+            const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];// day names 
+
+            //add day names sun to sat sa top
+            weekDays.forEach(day => { 
+                let dayHeader = document.createElement("div");
+                dayHeader.classList.add("day-header");
+                dayHeader.textContent = day;
+                calendarGrid.appendChild(dayHeader);
+            });
+             //mo add mga empty boxes before sa 1st sa month
+            for (let i = 0; i < firstDay; i++) {
+                let emptyDiv = document.createElement("div");
+                calendarGrid.appendChild(emptyDiv);
+            }
+            //mo add mga days sa month
+            for (let i = 1; i <= daysInMonth; i++) {
+                let dayDiv = document.createElement("div");
+                dayDiv.classList.add("day");
+                dayDiv.textContent = i; //shows the day number 
+                dayDiv.onclick = () => addEvent(i);//mo click para maka add event
+
+                  //if nay event ani nga day kay mo pakita sa event
+                if (events[`${month}-${i}`]) {
+                    events[`${month}-${i}`].forEach((eventText, index) => {
+                        let eventDiv = document.createElement("div");
+                        eventDiv.classList.add("event");
+                        eventDiv.innerHTML = `
+                            <span>${eventText}</span>
+                            <span class="checkmark" onclick="toggleDone(${month}, ${i}, ${index}, event)">✓</span>
+                            <span class="remove" onclick="removeEvent(${month}, ${i}, ${index})">X</span>
+                        `;
+                        dayDiv.appendChild(eventDiv);
+                    });
+                }
+                calendarGrid.appendChild(dayDiv);
+            }
+        }
+             //add event sa specific day
+        function addEvent(day) {
+            let eventText = prompt("Enter event for this day:"); //ask details mag unsa ana nga day
+            if (!eventText) return; //if wala then cancel
+
+            const month = monthSelector.value;// mo get sa current month
+            if (!events[`${month}-${day}`]) {
+                events[`${month}-${day}`] = [];
+            }
+            events[`${month}-${day}`].push(eventText);// add the event
+            updateCalendar();// refresh ang calendar
+        }
+            //marks the event na humana
+        function toggleDone(month, day, index, event) {
+            event.stopPropagation(); // mo stop sa click na mo add og event
+            const eventDiv = event.target.parentElement;//mo get sa event box
+            eventDiv.classList.toggle("done");// mo strikthrough if humana
+        }
+       //removes ang even sa specific na day nga naay event
+        function removeEvent(month, day, index) {
+            if (events[`${month}-${day}`] && events[`${month}-${day}`][index]) {
+                events[`${month}-${day}`].splice(index, 1);//remove the event
+                if (events[`${month}-${day}`].length === 0) {
+                    delete events[`${month}-${day}`];//mo delete sa event if empty
+                }
+                updateCalendar();//refresh calendar
+            }
+        }
+
+        function setToday() {// mo set sa calendar todays montyh
+            const today = new Date();// mo get sa karon na date
+            monthSelector.value = today.getMonth();// mo get sa current month
+            updateCalendar();//refresh 
+        }
+
+        function showAgenda() {
+            alert("Agenda view coming soon!");
+        }
+
+        function showWeekly() {
+            alert("Weekly view coming soon!");     // kato ning useless sa topright pwede ra ni nimo iremove
+        }
+
+        function showMonthly() {
+            alert("Monthly view coming soon!");
+        }
+
+        // performance tracker na functions
+        let timeLog = []; // mo store ssa time in and time out log ari
+
+        function recordTimeIn() { //records when mag start na
+            const today = new Date();//mo get sa current time and date
+            const date = today.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' }); //format sa date 
+            const time = today.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });//format sa time
+            timeLog.push({ date, timeIn: time, timeOut: "" });// add new time log
+            updateTimeLog();//refresh ang table
+        }
+            //mo record when stop sa work
+        function recordTimeOut() {
+            const today = new Date();// mo get sa current time and date na mo out
+            const date = today.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });// format sa date 
+            const time = today.toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });// format sa time
+            let lastEntry = timeLog[timeLog.length - 1];
+            if (lastEntry && lastEntry.date === date && !lastEntry.timeOut) {
+                lastEntry.timeOut = time;//add time out sa last entry 
+            } else {
+                timeLog.push({ date, timeIn: "", timeOut: time });// mo start a new entry if wala nay time
+            }
+            updateTimeLog();//refresh ang table
+        }
+      //mo update sa time log table whether in or our
+        function updateTimeLog() {
+            const timeLogBody = document.getElementById("time-log");// mo get sa table body
+            timeLogBody.innerHTML = "";//clear ang current entries 
+            timeLog.forEach(entry => {// add each entry sa table
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${entry.date}</td>
+                    <td>${entry.timeIn}</td>
+                    <td>${entry.timeOut}</td>
+                `;
+                timeLogBody.appendChild(row);
+            });
+        }
+          //refresh ang perforamnce tracker veiw
+        function updatePerformanceTracker() {
+            updateTimeLog();//refresh
+        }
+
+        // inventory managenment functions
+        let inventory = {};// mo store sa items and quantities here
+
+        let borrowHistory = [];//mo store sa borrow records history
+
+        function showAddItemForm() { //mo pakita na mo add an item form
+            document.getElementById('add-item-form').classList.add('active');// make form na ma visible
+        }
+         //mo hide sa add item form
+        function hideAddItemForm() {
+            document.getElementById('add-item-form').classList.remove('active');// mo hide sa form na visible
+            document.getElementById('new-item-name').value = '';//mo clear sa item name
+            document.getElementById('new-item-quantity').value = '';//mo clear sa quanti field
+        }
+
+        function addNewItem() {// mo add new item sa inventory 
+            const name = document.getElementById('new-item-name').value.trim();// mo get sa item name 
+            const quantity = parseInt(document.getElementById('new-item-quantity').value);// mo get pila ka buok or the quantity
+
+            if (!name || isNaN(quantity) || quantity <= 0) {
+                alert('Please enter a valid item name and quantity!');// mo show error if invalid ang gi input
+                return;
+            }
+
+            if (inventory[name]) {
+                inventory[name] += quantity; // mo add sa gi input daan na item
+            } else {
+                inventory[name] = quantity; //mo create a new item
+            }
+
+            hideAddItemForm();//mo hide sa form
+            updateInventory();// mo refresh sa inventory list 
+            populateOrderItems(); // mo update sa order til dropdowns
+        }
+
+        function borrowItem(item, stock) {// mo borrow og item
+            let quantity = prompt(`Enter quantity to borrow for ${item} (max ${stock}):`);// mo ask pila imo i borrow
+            quantity = parseInt(quantity);// mo show rag number 
+            if (isNaN(quantity) || quantity <= 0 || quantity > stock) {
+                alert("Invalid quantity or exceeds stock!");// mo show error if invalid ang number gi input
+                return;
+            }
+            inventory[item] -= quantity;// mo reduce ang stocks
+            const today = new Date().toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });// mo get sa date
+            borrowHistory.push({ date: today, item: item, quantity: quantity });// mo record sa gi borrow nimo
+            updateInventory();// refrest the inventory 
+            updateBorrowHistory();//mo refresht ang borrow history
+        }
+
+        function removeItem(element) { // mo remove item sa inventory 
+            const itemName = element.parentElement.querySelector('div:nth-child(2)').textContent; // mo get sa item name
+            if (confirm(`Remove ${itemName} from inventory?`)) { //mo ask for confirmation na i remove
+                delete inventory[itemName];// remove ang item
+                updateInventory();// refresh sa ang inventory list
+                populateOrderItems(); // update the order
+            }
+        }
+          //mo update sa inventory na table
+        function updateInventory() {
+            const stocks = document.getElementById('inventory-stocks');// mo get sa inventory area
+            stocks.innerHTML = '';// clears the current items
+            for (let item in inventory) { //mo loop through tanan items 
+                let div = document.createElement('div');
+                div.className = 'inventory-item';
+                div.innerHTML = `
+                    <img src="https://via.placeholder.com/40?text=${item}" alt="${item}">
+                    <div>${item}</div>
+                    <div>in stock: ${inventory[item]}</div>
+                    <button class="remove-btn" onclick="removeItem(this)">X</button>
+                `;
+                div.onclick = () => borrowItem(item, inventory[item]); // click para ma borrow
+                stocks.appendChild(div);//mo add item sa display
+            }
+        }
+             //mo update sa borrow history na table
+        function updateBorrowHistory() {
+            const history = document.getElementById('borrow-history');
+            history.innerHTML = '';// mo clear sa current entries 
+            borrowHistory.forEach(entry => { //mo add borrow in each record
+                let row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${entry.date}</td>
+                    <td>${entry.item}</td>
+                    <td>${entry.quantity}</td>
+                    <td><button class="return-btn" onclick="returnItem(this)">Return</button></td>
+                `;
+                history.appendChild(row);
+            });
+        }
+            //returns the borrowed item
+        function returnItem(button) {
+            const row = button.parentElement.parentElement; // get ang table row
+            const item = row.cells[1].textContent; // get sa item name
+            const quantity = parseInt(row.cells[2].textContent);// get sa quantity
+            const date = row.cells[0].textContent;//get ang date
+
+            if (confirm(`Return ${quantity} ${item}(s) borrowed on ${date}?`)) { // mo ask for confirmation
+                inventory[item] = (inventory[item] || 0) + quantity; //mo add back sa stocks
+                borrowHistory = borrowHistory.filter(entry => !(entry.date === date && entry.item === item && entry.quantity === quantity));// remove sa borrow history
+                updateInventory();//refrest invento
+                updateBorrowHistory();// refresh borrow histp
+            }
+        }
+
+        // order history functions
+        let orderHistory = []; // mo store ari ang mga order 
+
+        function showAddOrderForm() { // mo pakita ang form para maka add og order 
+            document.getElementById('add-order-form').classList.add('active'); // imake ang form to visible
+        }
+            //hide ang other form
+        function hideAddOrderForm() {
+            document.getElementById('add-order-form').classList.remove('active');//hide form
+            document.getElementById('order-date').value = '';// clear fields
+            document.getElementById('order-item').value = '';
+            document.getElementById('order-price').value = '';
+            document.getElementById('order-quantity').value = '';
+        }
+            // mo fill sa mga order form dropdowns nga kuyog ang inventory items
+        function populateOrderItems() {
+            const select = document.getElementById('order-item'); // mo get para ma abot sa dropdown
+            select.innerHTML = '<option value="">Select an item</option>'; //reset with the default option
+            for (let item in inventory) {// add each inventory item
+                let option = document.createElement('option');
+                option.value = item;
+                option.textContent = item;
+                select.appendChild(option);
+            }
+        }
+          //add new order history 
+        function addOrder() {
+            const date = document.getElementById('order-date').value;// mo get sa date
+            const item = document.getElementById('order-item').value;// mo get sa item name
+            const price = parseFloat(document.getElementById('order-price').value); // get sa price
+            const quantity = parseInt(document.getElementById('order-quantity').value);// get sa quantity
+             //mo check sa inputs if valid ba 
+            if (!date || !item || isNaN(price) || price <= 0 || isNaN(quantity) || quantity <= 0) {
+                alert('Please enter valid date, item, price, and quantity!'); // if di valid then error
+                return;
+            }
+
+            orderHistory.push({ date, item, price, quantity });
+            hideAddOrderForm();
+            updateOrderHistory();
+        }
+            //mo update sa history table
+        function updateOrderHistory() {
+            const history = document.getElementById('order-history');// mo get sa table body
+            history.innerHTML = ''; // mo clear sa mga current entries 
+            orderHistory.forEach(entry => { // mo add each order
+                let row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${entry.date}</td>
+                    <td>${entry.item}</td>
+                    <td>₱${entry.price.toFixed(2)}</td>
+                    <td>${entry.quantity}</td>
+                `;
+                history.appendChild(row);
+            });
+        }
+
+       
+
+        
+        switchView('dashboard'); // mo start jud sa dashboard
+        updateInventory();// mo load ang inventory
+        updateBorrowHistory();// mo load ang borrow history
+        updateOrderHistory();// mo load ang order history
+        populateOrderItems();// mo load ang mga items sa order histo
+    </script>
+</body>
+</html>
